@@ -22,7 +22,7 @@ import java.io.PrintStream;
 
 public class ariprog {
 
-  private static boolean debug = true;
+  private static boolean debug = false;
   private static final String task = "ariprog";
   private static PrintStream outs = System.out;
 
@@ -43,22 +43,25 @@ public class ariprog {
     int N = scanr.nextInt();
     int M = scanr.nextInt();
     int maxBS = 2 * M*M;
-    outd("N, M, maxBS : " + N + ", " + M + ", " + maxBS);
+//    outd("N, M, maxBS : " + N + ", " + M + ", " + maxBS);
+    // Create boolean array for fast check of bisquares
+    boolean[] bsArr = new boolean[maxBS+1];
 
     // Construct set of bisquares
-    long start = System.currentTimeMillis();
+//    long start = System.currentTimeMillis();
     for (int p = 0; p <= M; p++)
     {
       for (int q = 0; q <= p; q++)
       {
         Integer bisq = p*p + q*q;
         bisquares.add(bisq);
+        bsArr[bisq] = true;
       }
     }
 
-    outd("Size of bisqure list: " + bisquares.size());
-    long stop = System.currentTimeMillis();
-    outd("Time to construct bisquare set: " + (stop - start)/1000.0);
+//    outd("Size of bisqure list: " + bisquares.size());
+//    long stop = System.currentTimeMillis();
+//    outd("Time to construct bisquare set: " + (stop - start)/1000.0);
 
     // A must be a bisquare so only need to check A values where A is a bisquare
 
@@ -79,10 +82,10 @@ public class ariprog {
     // MaxA is maxBS = maxA + (N-1)*b => maxA = maxBS - (N-1) * b
     // MaxB is maxBS = (N-1)*maxB => maxB = maxBS/(N-1)
 
-    long stop2 = 0;
+//    long stop2 = 0;
     int numProgs = 0;
     int maxB = maxBS / (N-1);
-    outd("maxB: " + maxB);
+//    outd("maxB: " + maxB);
 
 /*
  * Attempt to limit number of B's to check by using fact that a+b must be a bisquare,
@@ -130,50 +133,50 @@ public class ariprog {
     //  
     for (int ib = 1; ib <= maxB; ib++)
     {
-      String bStr = " " + ib;
+//      String bStr = " " + ib;
       int maxA = maxBS - (N-1) * ib;
 //      outd("maxB: " + maxB + " maxA: " + maxA);
-//      for (int a = 0; a <= maxA; a++)
+//      for (int ia = 0; ia <= maxA; ia++)
 //      {
 //      for (Integer ia : bisquares)
       for (int ia : aArr)
       {
         if (ia > maxA) continue;
 
-        if (checkAriProg(ia, ib, N, bisquares))
+        if (checkAriProg(ia, ib, N, bsArr))
         {
-          StringBuilder sb = new StringBuilder();
-          sb.append(ia).append(bStr);
+//          StringBuilder sb = new StringBuilder();
+//          sb.append(ia).append(bStr);
           out.println("" + ia + " " + ib);
-          out.println(sb.toString());
-          outd(sb.toString());
-          stop2 = System.currentTimeMillis();
-          outd("Lap time to find progressions: " + (stop2 - stop)/1000.0);
+//          out.println(sb.toString());
+//          outd(sb.toString());
+//          stop2 = System.currentTimeMillis();
+//          outd("Lap time to find progressions: " + (stop2 - stop)/1000.0);
           numProgs++;
         }
         // Check for max numProgs
-        if (numProgs >= 10000) break;
+//        if (numProgs >= 10000) break;
       }
-      if (numProgs >= 10000) break;
+//      if (numProgs >= 10000) break;
     }
 
     
-    stop2 = System.currentTimeMillis();
-    outd("Time to find progressions: " + (stop2 - stop)/1000.0);
-    outd("NumProgs: " + numProgs);
+//    stop2 = System.currentTimeMillis();
+//    outd("Time to find progressions: " + (stop2 - stop)/1000.0);
+//    outd("NumProgs: " + numProgs);
     if (numProgs == 0)
     {
       outd("NONE");
       out.println("NONE");
     }
     scanr.close();
-    out.println("Total time to find progressions: " + (stop2 - stop)/1000.0);
+//    out.println("Total time to find progressions: " + (stop2 - stop)/1000.0);
     out.close();
     System.exit(0);
   }
 
   // For given a, b check if first N terms are all bisquares
-  static boolean checkAriProg(int aa, int bb, int NN, Set<Integer> bisquares)
+  static boolean checkAriProg(int aa, int bb, int NN, boolean bsArr[])
   {
 /*
     for (int nn = 2; nn < NN; nn++)
@@ -187,7 +190,8 @@ public class ariprog {
 //    int p = aa + (NN-1)*bb; Seems like this should be faster, but it's actually a little slower
     for (int nn = NN-1; nn > 0; nn--)
     {
-      if (!bisquares.contains(p)) return false;
+//      if (!bisquares.contains(p)) return false;
+      if (!bsArr[p]) return false;
       p = p - bb;
     }
     return true;
